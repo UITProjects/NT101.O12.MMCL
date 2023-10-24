@@ -28,34 +28,49 @@ class Client:
         argument["type"] = "forwarded"
         recipient_Client.send(argument)
 
-    def get_clients(self, argument: dict):
-        message_dict = {
-            "type": "get_clients",
-            "status": "OK",
-            "clients": ["akira"]
-        }
-        for client in clients:
-            if client.username != self.username:
-                message_dict["clients"].append(client.username)
-        print(message_dict)
-        self.send(message_dict)
-
-    def broadcast_public_key(self,argument:dict):
+    def broadcast_public_key(self, argument: dict):
+        global clients
         message_dict = {
             "type": "recipients_publickey",
             "clients": {}
         }
         for client in clients:
+            if client.username == None:
+                continue
             message_dict["clients"][client.username] = client.public_key
         self.send(message_dict)
 
     def listen(self):
+        global clients
         while True:
-            header_bytes = self.client_socket.recv(4)
+            try:
+                header_bytes = self.client_socket.recv(4)
+            except ConnectionError:
+                clients_temp = []
+                for client in clients:
+                    if client.username == self.username:
+                        continue
+                    clients_temp.append(client)
+                clients.clear()
+                clients = clients_temp
+                print(self.username + " has close connection")
+                return
+
             header_int = int.from_bytes(header_bytes, byteorder='little', signed=True)
             message_bytes = self.client_socket.recv(header_int)
             message_str = message_bytes.decode()
-            message_dict = json.loads(message_str)
+            try:
+                message_dict = json.loads(message_str)
+            except json.decoder.JSONDecodeError:
+                print(self.username + " has close connection")
+                clients_temp =[]
+                for client in clients:
+                    if client.username == self.username:
+                        continue
+                    clients_temp.append(client)
+                clients.clear()
+                clients = clients_temp
+                return
             self.process(message_dict)
 
     def send(self, message_dict: dict):
@@ -75,8 +90,7 @@ class Client:
         self.send(message_dict)
 
     def process(self, message_dict: dict):
-        print(message_dict)
+        if message_dict["type"]!="get_clients":
+            print(message_dict)
         self.type_message[message_dict["type"]](message_dict)
 
-
-clients: [Client] = []

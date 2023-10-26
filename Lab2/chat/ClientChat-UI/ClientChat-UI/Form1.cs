@@ -1,8 +1,10 @@
 ﻿using Newtonsoft.Json;
+using System.Buffers.Text;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
 using static System.Net.Mime.MediaTypeNames;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace ClientChat_UI
 {
@@ -12,9 +14,11 @@ namespace ClientChat_UI
         String[] clients;
         String client_name;
         Dictionary<String, String> clients_publickey = new Dictionary<String, String>();
-        RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
+        RSACryptoServiceProvider rsa_client = new RSACryptoServiceProvider();
         Thread listen_Thread;
         Thread get_client_Thread;
+        RSACryptoServiceProvider rsa_server = new RSACryptoServiceProvider();
+        Boolean server_encrypt = false;
         public client_form()
         {
             InitializeComponent();
@@ -27,6 +31,7 @@ namespace ClientChat_UI
             listen_Thread.IsBackground = true;
             get_client_Thread = new Thread(() => get_client());
             get_client_Thread.IsBackground = true;
+            exchange_publickey();
         }
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
@@ -40,6 +45,12 @@ namespace ClientChat_UI
         {
             String message_json_String = JsonConvert.SerializeObject(message_dict);
             byte[] message_bytes = Encoding.UTF8.GetBytes(message_json_String);
+            if (server_encrypt)
+            {
+                
+                message_bytes = rsa_server.Encrypt(message_bytes, RSAEncryptionPadding.Pkcs1);
+
+            }
             int header_message_int = message_bytes.Length;
             byte[] header_message_bytes = BitConverter.GetBytes(header_message_int);
             client_socket.Send(header_message_bytes);
@@ -84,11 +95,13 @@ namespace ClientChat_UI
                     {
                         byte_read += client_socket.Receive(message_bytes);
                     }
+                    if (server_encrypt)
+                        message_bytes = rsa_client.Decrypt(message_bytes,RSAEncryptionPadding.Pkcs1);
                     String message_String = Encoding.UTF8.GetString(message_bytes);
                     Dictionary<string, Object> message_dict = JsonConvert.DeserializeObject<Dictionary<String, Object>>(message_String);
                     if (message_dict["type"].ToString() == "forwarded")
                     {
-                        String decypted_message_String = Encoding.UTF8.GetString(rsa.Decrypt(Convert.FromBase64String((string)message_dict["message"]), true));
+                        String decypted_message_String = Encoding.UTF8.GetString(rsa_client.Decrypt(Convert.FromBase64String((string)message_dict["message"]), true));
                         chat_listbox.Invoke(new Action(() =>
                         {
                             chat_listbox.Items.Add(message_dict["from"].ToString() + ": " + decypted_message_String);
@@ -106,17 +119,17 @@ namespace ClientChat_UI
                         clients_object = clients_object.Trim();
                         char[] chars = { ',' };
                         clients = clients_object.Split(chars);
-                        Dictionary<String,String> clients_publickey_temp = new Dictionary<String,String>();
+                        Dictionary<String, String> clients_publickey_temp = new Dictionary<String, String>();
                         for (int i = 0; i < clients.Length; i++)
                         {
                             String client_username = clients[i].Split(':')[0].Trim();
-                            String client_publickey = clients[i].Split(":")[1].Trim();   
+                            String client_publickey = clients[i].Split(":")[1].Trim();
                             clients_publickey_temp.Add(client_username, client_publickey);
 
                         }
-                        
-                    
-                        if (clients_publickey.Count==clients_publickey_temp.Count)
+
+
+                        if (clients_publickey.Count == clients_publickey_temp.Count)
                         {
                             continue;
                         }
@@ -130,15 +143,29 @@ namespace ClientChat_UI
                                 List<String> clients_username = new List<String>(clients_publickey.Keys);
                                 for (int i = 0; i < clients_username.Count; i++)
                                 {
-                                    if (clients_username[i] == "null" || clients_username[i]==client_name)
+                                    if (clients_username[i] == "null" || clients_username[i] == client_name)
                                         continue;
                                     clients_listview.Items.Add(clients_username[i]);
                                 }
 
                             }));
                         }
-                        
 
+
+                    }else if(message_dict["type"].ToString() == "exchange_publickey_response")
+                    {
+                        String server_publickey = message_dict["server_publickey"].ToString();
+                        rsa_server = new RSACryptoServiceProvider();
+                        rsa_server.ImportRSAPublicKey(Convert.FromBase64String(server_publickey),out _);
+
+                        server_encrypt = true;
+                    }
+                    else if (message_dict["type"].ToString()== "register")
+                    {
+                        if (message_dict["status"].ToString() == "OK")
+                        {
+                            MessageBox.Show("Đăng ký thành công", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
                     }
                 }
             }
@@ -148,11 +175,12 @@ namespace ClientChat_UI
             Dictionary<String, String> message_dict = new Dictionary<String, String>();
             message_dict.Add("username", username);
             message_dict.Add("type", "register");
-            message_dict.Add("public_key", Convert.ToBase64String(rsa.ExportRSAPublicKey()));
+            
             send(message_dict);
             client_name = username;
-            listen(true);
         }
+        
+
         void get_client()
         {
             while (true)
@@ -187,9 +215,17 @@ namespace ClientChat_UI
         {
             register(username_textbox.Text);
             register_btn.Enabled = false;
-            listen_Thread.Start();
             username_textbox.Enabled = false;
             get_client_Thread.Start();
+        }
+        void exchange_publickey()
+        {
+            Dictionary<String, String> message_dict = new Dictionary<String, String>();
+            message_dict.Add("machine_name", Environment.MachineName);
+            message_dict.Add("type", "exchange_publickey");
+            message_dict.Add("client_publickey",rsa_client.ExportRSAPublicKeyPem());
+            send(message_dict);
+            listen_Thread.Start();
         }
     }
 }

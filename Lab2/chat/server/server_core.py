@@ -10,7 +10,8 @@ class Client:
     def __init__(self, client_socket: socket):
         self.client_socket = client_socket
         self.username = None
-        self.public_key: str = ""
+        self.public_key_pem_str: str = ""
+        self.public_key_der_str: str = ""
         self.encrypted = False
 
         self.type_message = {
@@ -24,16 +25,16 @@ class Client:
         self.thread = threading.Thread(target=self.listen)
         self.thread.start()
 
-    def forward(self, argument: dict):
+    def forward(self, header_dict: dict, message_bytes: bytes):
         recipient_Client: Client
         for client in clients:
-            if client.username == argument["to_recipient"]:
+            if client.username == header_dict["to_recipient"]:
                 recipient_Client = client
                 break
-        argument["type"] = "forwarded"
-        recipient_Client.send(argument)
+        header_dict["type"] = "forwarded"
+        recipient_Client.send(header_dict, message_bytes)
 
-    def broadcast_public_key(self, argument: dict):
+    def broadcast_public_key(self, argument: dict, message_bytes: bytes):
         global clients
         message_dict = {
             "type": "recipients_publickey",
@@ -42,8 +43,8 @@ class Client:
         for client in clients:
             if client.username == None:
                 continue
-            message_dict["clients"][client.username] = client.public_key
-        self.send(message_dict)
+            message_dict["clients"][client.username] = client.public_key_der_str
+        self.send(message_dict, force_no_encrypt=True)
 
     def listen(self):
         global clients
@@ -69,14 +70,13 @@ class Client:
                 clients = clients_temp
                 print(self.username + " has close connection")
                 return
-
+            print(header_content_bytes)
             if bool.from_bytes(encrypt_bytes, byteorder="little"):
                 message_bytes = cipher_module.decrypt(message_bytes)
                 header_content_bytes = cipher_module.decrypt(header_content_bytes)
-            print(header_content_bytes)
-            message_str = header_content_bytes.decode()
+            header_content_str = header_content_bytes.decode()
             try:
-                message_dict = json.loads(message_str)
+                message_dict = json.loads(header_content_str)
             except json.decoder.JSONDecodeError:
                 print(self.username + " has close connection")
                 clients_temp = []
@@ -87,28 +87,30 @@ class Client:
                 clients.clear()
                 clients = clients_temp
                 return
-            self.process(message_dict)
+            self.process(message_dict, message_bytes)
 
-    def send(self, header_dict: dict, message_str: str = "null", encrypt: bool = False):
-
-        message_bytes = message_str.encode()
-
+    def send(self, header_dict: dict, message_bytes: bytes = "null".encode(), force_no_encrypt: bool = False):
         header_json_str = json.dumps(header_dict)
         header_content_bytes = header_json_str.encode()
-        if self.encrypted:
-            header_content_bytes = cipher_module.encrypt(header_content_bytes, self.public_key.encode())
-            message_bytes = cipher_module.encrypt(message_bytes, self.public_key.encode())
+        if force_no_encrypt:
+            encrypt_bytes = False.to_bytes(1, byteorder="little")
+        elif self.encrypted:
+            header_content_bytes = cipher_module.encrypt(header_content_bytes, self.public_key_pem_str.encode())
+            message_bytes = cipher_module.encrypt(message_bytes, self.public_key_pem_str.encode())
+            encrypt_bytes = True.to_bytes(1, byteorder="little")
+        else:
+            encrypt_bytes = False.to_bytes(1, byteorder="little")
 
-        encrypt_bytes = bool.to_bytes(encrypt, byteorder="little")
-        print(encrypt_bytes)
         header_length_bytes = len(header_content_bytes).to_bytes(4, byteorder="little")
         message_length_bytes = len(message_bytes).to_bytes(4, byteorder="little")
+
         self.client_socket.send(encrypt_bytes)
         self.client_socket.send(header_length_bytes)
         self.client_socket.send(header_content_bytes)
         self.client_socket.send(message_length_bytes)
         self.client_socket.send(message_bytes)
-    def register(self, arguments: dict):
+
+    def register(self, arguments: dict, message_byte):
         self.username = arguments["username"]
         message_dict = {
             "type": "register",
@@ -116,19 +118,20 @@ class Client:
         }
         self.send(message_dict)
 
-    def exchange_publickey(self, argument: dict):
-        message_dict = {
+    def exchange_publickey(self, arguments: dict, message_bytes: bytes):
+        header_dict = {
             "type": "exchange_publickey_response",
             "server_publickey": cipher_module.public_key_der_str,
         }
-        self.public_key = argument["client_publickey"]
-        self.send(message_dict)
+        self.public_key_pem_str = arguments["client_publickey_pem"]
+        self.public_key_der_str = arguments["client_publickey_der"]
+        self.send(header_dict)
         self.encrypted = True
 
     def session_key(self, argument: dict):
         pass
 
-    def process(self, message_dict: dict):
-        if message_dict["type"] != "get_clients":
-            print(message_dict)
-        self.type_message[message_dict["type"]](message_dict)
+    def process(self, header_dict: dict, message_byte: bytes):
+        if header_dict["type"] != "get_clients":
+            print(header_dict)
+        self.type_message[header_dict["type"]](header_dict, message_byte)

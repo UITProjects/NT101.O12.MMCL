@@ -3,7 +3,7 @@ import socket
 from server_core import Client,clients
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.bind(("0.0.0.0", 2509))
+server.bind(("0.0.0.0", 3004))
 server.listen()
 print("Server is listening")
 while True:

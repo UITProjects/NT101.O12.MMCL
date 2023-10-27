@@ -26,7 +26,7 @@ namespace ClientChat_UI
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            client_socket.Connect("localhost", 2509);
+            client_socket.Connect("server.uitprojects.com", 3004);
             listen_Thread = new Thread(() => listen());
             listen_Thread.IsBackground = true;
             get_client_Thread = new Thread(() => get_client());

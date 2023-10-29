@@ -7,7 +7,7 @@ clients = []
 
 
 class Client:
-    def __init__(self, client_socket: socket):
+    def __init__(self, client_socket: socket,lock:threading.Lock):
         self.client_socket = client_socket
         self.username = None
         self.public_key_pem_str: str = ""
@@ -21,9 +21,18 @@ class Client:
             "exchange_publickey": self.exchange_publickey,
             "session_key": self.session_key
         }
-        clients.append(self)
-        self.thread = threading.Thread(target=self.listen)
+        with lock:
+            clients.append(self)
+        self.thread = threading.Thread(target=self.listen,args=(lock,))
         self.thread.start()
+
+    def receive(self, length: int) -> bytes:
+        actual_data = b""
+        byte_read = 0
+        while byte_read < length:
+            actual_data += self.client_socket.recv(length-byte_read)
+            byte_read = len(actual_data)
+        return actual_data
 
     def forward(self, header_dict: dict, message_bytes: bytes):
         recipient_Client: Client
@@ -46,29 +55,25 @@ class Client:
             message_dict["clients"][client.username] = client.public_key_der_str
         self.send(message_dict, force_no_encrypt=True)
 
-    def listen(self):
+    def listen(self,lock:threading.Lock):
         global clients
-        encrypt_bytes: bytes
-        header_length_bytes: bytes
-        header_content_bytes: bytes
-        message_bytes: bytes
-        message_length_bytes: bytes
         while True:
             try:
-                encrypt_bytes = self.client_socket.recv(1)
-                header_length_bytes = self.client_socket.recv(4)
-                header_content_bytes = self.client_socket.recv(int.from_bytes(header_length_bytes, byteorder="little"))
-                message_length_bytes = self.client_socket.recv(4)
-                message_bytes = self.client_socket.recv(int.from_bytes(message_length_bytes, byteorder="little"))
+                encrypt_bytes = self.receive(1)
+                header_length_bytes = self.receive(4)
+                header_content_bytes = self.receive(int.from_bytes(header_length_bytes,byteorder="little",signed=True))
+                message_length_bytes = self.receive(4)
+                message_bytes = self.client_socket.recv(int.from_bytes(message_length_bytes, byteorder="little",signed=True))
             except ConnectionError:
-                clients_temp = []
-                for client in clients:
-                    if client.username == self.username:
-                        continue
-                    clients_temp.append(client)
-                clients.clear()
-                clients = clients_temp
-                print(self.username + " has close connection")
+                with lock:
+                    clients_temp = []
+                    for client in clients:
+                        if client.username == self.username:
+                            continue
+                        clients_temp.append(client)
+                    clients.clear()
+                    clients = clients_temp
+                    print(self.username + " has close connection")
                 return
             print(header_content_bytes)
             if bool.from_bytes(encrypt_bytes, byteorder="little"):
@@ -78,16 +83,18 @@ class Client:
             try:
                 message_dict = json.loads(header_content_str)
             except json.decoder.JSONDecodeError:
-                print(self.username + " has close connection")
-                clients_temp = []
-                for client in clients:
-                    if client.username == self.username:
-                        continue
-                    clients_temp.append(client)
-                clients.clear()
-                clients = clients_temp
-                return
-            self.process(message_dict, message_bytes)
+                with lock:
+                    print(self.username + " has close connection")
+                    clients_temp = []
+                    for client in clients:
+                        if client.username == self.username:
+                            continue
+                        clients_temp.append(client)
+                    clients.clear()
+                    clients = clients_temp
+                    return
+            with lock:
+                self.process(message_dict, message_bytes)
 
     def send(self, header_dict: dict, message_bytes: bytes = "null".encode(), force_no_encrypt: bool = False):
         header_json_str = json.dumps(header_dict)

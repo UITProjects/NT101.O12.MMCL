@@ -10,7 +10,6 @@ namespace ClientChat_UI
 {
     public partial class client_form : Form
     {
-        Socket client_socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         String[] clients;
         String client_name;
         Dictionary<String, String> clients_publickey = new Dictionary<String, String>();
@@ -19,6 +18,11 @@ namespace ClientChat_UI
         Thread get_client_Thread;
         RSACryptoServiceProvider rsa_server = new RSACryptoServiceProvider();
         Boolean server_encrypt = false;
+
+
+        TcpClient TcpClient = new TcpClient();
+        NetworkStream stream;
+
         public client_form()
         {
             InitializeComponent();
@@ -26,19 +30,20 @@ namespace ClientChat_UI
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            client_socket.Connect("server.uitprojects.com", 3004);
+            TcpClient.Connect("192.168.1.120", 3004);
+            stream = TcpClient.GetStream();
             listen_Thread = new Thread(() => listen());
             listen_Thread.IsBackground = true;
             get_client_Thread = new Thread(() => get_client());
             get_client_Thread.IsBackground = true;
+           
             exchange_publickey();
         }
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             base.OnFormClosing(e);
             if (e.CloseReason == CloseReason.WindowsShutDown) return;
-            client_socket.Shutdown(SocketShutdown.Both);
-            client_socket.Close();
+            
         }
         void send(Dictionary<String, String> header_dict, String message)
 
@@ -60,11 +65,12 @@ namespace ClientChat_UI
             byte[] header_length_bytes = BitConverter.GetBytes(header_content_bytes.Length);
             byte[] message_length_bytes = BitConverter.GetBytes(message_bytes.Length);
 
-            client_socket.Send(encrypt_bytes);
-            client_socket.Send(header_length_bytes);
-            client_socket.Send(header_content_bytes);
-            client_socket.Send(message_length_bytes);
-            client_socket.Send(message_bytes);
+            stream.Write(encrypt_bytes);
+            stream.Write(header_length_bytes);
+            stream.Write(header_content_bytes);
+            stream.Write(message_length_bytes);
+            stream.Write(message_bytes);
+            stream.Flush();
         }
         void listen(bool onetime = false)
         {
@@ -84,16 +90,25 @@ namespace ClientChat_UI
 
             while (true)
             {
+                byte[] Receive(int length)
+                {
+                    byte[] buffer = new byte[length];
+                    int byte_read = 0;
+                    while (byte_read < length)
+                    {
+                       byte_read += stream.Read(buffer, byte_read, length-byte_read);
+                    }
+                    stream.Flush();
+                    return buffer;
+                }
                 try
                 {
-                    client_socket.Receive(encrypt_bytes);
-                    client_socket.Receive(header_length_bytes);
-                    header_content_bytes = new byte[BitConverter.ToInt32(header_length_bytes)];
-                    client_socket.Receive(header_content_bytes);
-                    client_socket.Receive(message_length_bytes);
-                    message_bytes = new byte[BitConverter.ToInt32(message_length_bytes)];
-                    client_socket.Receive(message_bytes);
-
+                    encrypt_bytes = Receive(1);
+                    header_length_bytes = Receive(4);
+                    header_content_bytes = Receive(BitConverter.ToInt32(header_length_bytes));
+                    message_length_bytes = Receive(4);
+                    message_bytes = Receive(BitConverter.ToInt32(message_length_bytes));
+                    
                 }
                 catch (SocketException ex)
                 {

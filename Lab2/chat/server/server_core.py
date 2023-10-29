@@ -19,7 +19,6 @@ class Client:
             "get_clients": self.broadcast_public_key,
             "forward": self.forward,
             "exchange_publickey": self.exchange_publickey,
-            "session_key": self.session_key
         }
         with lock:
             clients.append(self)
@@ -75,7 +74,13 @@ class Client:
                     clients = clients_temp
                     print(self.username + " has close connection")
                 return
+            print("header raw data:")
             print(header_content_bytes)
+            print()
+            print("message raw data:")
+            print(message_bytes)
+            print()
+
             if bool.from_bytes(encrypt_bytes, byteorder="little"):
                 message_bytes = cipher_module.decrypt(message_bytes)
                 header_content_bytes = cipher_module.decrypt(header_content_bytes)
@@ -135,10 +140,8 @@ class Client:
         self.send(header_dict)
         self.encrypted = True
 
-    def session_key(self, argument: dict):
-        pass
-
     def process(self, header_dict: dict, message_byte: bytes):
-        if header_dict["type"] != "get_clients":
-            print(header_dict)
+        print("decrypted header:")
+        print(header_dict)
+        print()
         self.type_message[header_dict["type"]](header_dict, message_byte)

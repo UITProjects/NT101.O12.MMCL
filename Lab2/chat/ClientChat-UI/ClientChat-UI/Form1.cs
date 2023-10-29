@@ -30,7 +30,7 @@ namespace ClientChat_UI
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            TcpClient.Connect("192.168.1.120", 3004);
+            TcpClient.Connect("localhost", 3004);
             stream = TcpClient.GetStream();
             listen_Thread = new Thread(() => listen());
             listen_Thread.IsBackground = true;

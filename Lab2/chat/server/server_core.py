@@ -90,13 +90,12 @@ class Client:
             print()
 
             if bool.from_bytes(encrypt_bytes, byteorder="little"):
-                message_bytes = cipher_module.decrypt(message_bytes)
                 header_content_bytes = cipher_module.decrypt(header_content_bytes)
             header_content_str = header_content_bytes.decode()
-            message_dict = json.loads(header_content_str)
+            header_dict = json.loads(header_content_str)
 
             with lock:
-                self.process(message_dict, message_bytes)
+                self.process(header_dict, message_bytes)
 
     def send(self, header_dict: dict, message_bytes: bytes = "null".encode(), force_no_encrypt: bool = False):
         header_json_str = json.dumps(header_dict)
@@ -105,7 +104,6 @@ class Client:
             encrypt_bytes = False.to_bytes(1, byteorder="little")
         elif self.encrypted:
             header_content_bytes = cipher_module.encrypt(header_content_bytes, self.public_key_pem_str.encode())
-            message_bytes = cipher_module.encrypt(message_bytes, self.public_key_pem_str.encode())
             encrypt_bytes = True.to_bytes(1, byteorder="little")
         else:
             encrypt_bytes = False.to_bytes(1, byteorder="little")

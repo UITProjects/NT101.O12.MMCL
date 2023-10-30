@@ -32,6 +32,7 @@ namespace ClientChat_UI
         {
             TcpClient.Connect("localhost", 3004);
             stream = TcpClient.GetStream();
+            TcpClient.LingerState = new LingerOption(true,5);
             listen_Thread = new Thread(() => listen());
             listen_Thread.IsBackground = true;
             get_client_Thread = new Thread(() => get_client());
@@ -43,6 +44,8 @@ namespace ClientChat_UI
         {
             base.OnFormClosing(e);
             if (e.CloseReason == CloseReason.WindowsShutDown) return;
+            stream.Close();
+            TcpClient.Close();
             
         }
         void send(Dictionary<String, String> header_dict, String message)
@@ -72,7 +75,7 @@ namespace ClientChat_UI
             stream.Write(message_bytes);
             stream.Flush();
         }
-        void listen(bool onetime = false)
+        void listen()
         {
             byte[] encrypt_bytes = new byte[1];
 
@@ -97,6 +100,7 @@ namespace ClientChat_UI
                     while (byte_read < length)
                     {
                        byte_read += stream.Read(buffer, byte_read, length-byte_read);
+             
                     }
                     stream.Flush();
                     return buffer;
@@ -110,7 +114,7 @@ namespace ClientChat_UI
                     message_bytes = Receive(BitConverter.ToInt32(message_length_bytes));
                     
                 }
-                catch (SocketException ex)
+                catch (System.ObjectDisposedException ex)
                 {
                     break;
                 }

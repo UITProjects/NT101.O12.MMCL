@@ -27,8 +27,8 @@ bitset<128> large_number_generate() {
 }
 
 
-bool min_bits(bitset<128> a, bitset<128> b) {
-    for (int i = 127; i >= 0;i--)
+bool min_bits(bitset<6> a, bitset<6> b) {
+    for (int i = 5; i >= 0;i--)
         if (a[i] == 1 && b[i] == 1)
             continue;
         else if (a[i] == 1 && b[i] == 0)
@@ -38,11 +38,11 @@ bool min_bits(bitset<128> a, bitset<128> b) {
 
 }
 
-bitset<128> minus_bits(bitset<128> a, bitset <128> b) {
-    bitset<128> result;
+bitset<6> minus_bits(bitset<6> a, bitset <6> b) {
+    bitset<6> result;
     result.reset();
     bool borrow = false;
-    for (int i = 0; i < 128 ;i++) {
+    for (int i = 0; i < 5 ;i++) {
 
 
         if (borrow) {
@@ -83,22 +83,52 @@ bitset<128> minus_bits(bitset<128> a, bitset <128> b) {
 
 }
 
-bitset<128> gcd(bitset<128> a, bitset<128> b) {
-    bitset<128> result;
-    if (min_bits(a, b))
-       result =  minus_bits(b, a);
-    else result =  minus_bits(a, b); 
-    cout << result.to_string();
 
-    return result;
+bool equal_bits(bitset<128> a, bitset<128> b) {
+    for (int i = 0; i < 128; i++)
+        if (a[i] != b[i])
+            return false;
+        else
+            continue;
+
+    return true;
+}
+
+bitset<6> gcd(bitset<6> a, bitset<6> b) {
+    bitset<6> result;
+    int count = 0;
+    
+
+    while (!(a==b)) {
+        if (min_bits(a, b))
+            b = minus_bits(b, a);
+        else
+            a = minus_bits(a, b);
+        count++;
+        cout << count << endl;
+    }
+    
+    
+
+    
+    cout << a.to_string();
+
+    return a;
     
 }
 
 
 int main() {
 
-    bitset<128> a =  large_number_generate();
-    bitset<128> b =  large_number_generate();
-    gcd(a, b);
+   // bitset<128> a =  large_number_generate();
+   // bitset<128> b =  large_number_generate();
+    //gcd(a, b);
+
+
+    bitset<6> a = bitset<6>("110000");
+    bitset<6> b = bitset<6>("011110");
+    cout << a.to_string() << endl;
+    cout << b.to_string() << endl;
+    gcd(a,b);
     return 0;
 }

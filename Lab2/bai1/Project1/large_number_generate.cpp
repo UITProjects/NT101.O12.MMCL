@@ -118,9 +118,10 @@ int main() {
 
    // bitset<81> a = bitset<81>("0111111111111100"); // 33554432
   //  bitset<81> b = bitset<81>("10000000000000000000000000"); // 32764
+  //  gcd(a, b);  4: 100
     bitset<81> gcd_result = gcd(a, b);
     cout << "gcd: " << endl;
-    cout << gcd_result.to_string() << endl; // 4: 100
+    cout << gcd_result.to_string() << endl;
     cout << "a: " << endl;
     cout << a.to_string() << endl ;
     cout << "b: " << endl;

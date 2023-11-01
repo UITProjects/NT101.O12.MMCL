@@ -6,30 +6,32 @@
 
 using namespace std;
 
-bitset<128> large_number_generate() {
-    bitset<128>large_number_bits;
+bitset<81> large_number_generate() {
+    bitset<81>large_number_bits;
 
     random_device dev;
     mt19937 rng(dev());
     std::uniform_int_distribution<std::mt19937::result_type> dist6(0, 1);
 
-    for (int i = 0; i < 82; i++)
-        large_number_bits.set(i);
 
-    for (int i = 82; i < 128;i++)
+    for (int i = 0; i < 81;i++)
         if (dist6(rng) == 1)
             large_number_bits.set(i);
         else
             continue;
-
-    cout << large_number_bits.to_string() << endl;
+            
     return large_number_bits;
 }
 
 
-bool min_bits(bitset<6> a, bitset<6> b) {
-    for (int i = 5; i >= 0;i--)
-        if (a[i] == 1 && b[i] == 1)
+bool min_bits(bitset<81> a, bitset<81> b) {
+    for (int i = 80; i >= 0;i--)
+        if (
+            (a[i] == 1 && b[i] == 1)
+            || a[i] == 0 && b[i] == 0 
+            )
+
+
             continue;
         else if (a[i] == 1 && b[i] == 0)
             return false;
@@ -38,11 +40,11 @@ bool min_bits(bitset<6> a, bitset<6> b) {
 
 }
 
-bitset<6> minus_bits(bitset<6> a, bitset <6> b) {
-    bitset<6> result;
+bitset<81> minus_bits(bitset<81> a, bitset <81> b) {
+    bitset<81> result;
     result.reset();
     bool borrow = false;
-    for (int i = 0; i < 5 ;i++) {
+    for (int i = 0; i < 81 ;i++) {
 
 
         if (borrow) {
@@ -84,22 +86,17 @@ bitset<6> minus_bits(bitset<6> a, bitset <6> b) {
 }
 
 
-bool equal_bits(bitset<128> a, bitset<128> b) {
-    for (int i = 0; i < 128; i++)
-        if (a[i] != b[i])
-            return false;
-        else
-            continue;
 
-    return true;
-}
-
-bitset<6> gcd(bitset<6> a, bitset<6> b) {
-    bitset<6> result;
+bitset<81> gcd(bitset<81> a, bitset<81> b) {
     int count = 0;
     
 
     while (!(a==b)) {
+        if (b == 0)
+            return b;
+        else if (a == 0)
+            return b;
+
         if (min_bits(a, b))
             b = minus_bits(b, a);
         else
@@ -108,11 +105,7 @@ bitset<6> gcd(bitset<6> a, bitset<6> b) {
         cout << count << endl;
     }
     
-    
-
-    
-    cout << a.to_string();
-
+   
     return a;
     
 }
@@ -120,15 +113,17 @@ bitset<6> gcd(bitset<6> a, bitset<6> b) {
 
 int main() {
 
-   // bitset<128> a =  large_number_generate();
-   // bitset<128> b =  large_number_generate();
-    //gcd(a, b);
+    bitset<81> a =  large_number_generate();
+    bitset<81> b =  large_number_generate();
 
-
-    bitset<6> a = bitset<6>("110000");
-    bitset<6> b = bitset<6>("011110");
-    cout << a.to_string() << endl;
+   // bitset<81> a = bitset<81>("0111111111111100"); // 33554432
+  //  bitset<81> b = bitset<81>("10000000000000000000000000"); // 32764
+    bitset<81> gcd_result = gcd(a, b);
+    cout << "gcd: " << endl;
+    cout << gcd_result.to_string() << endl; // 4: 100
+    cout << "a: " << endl;
+    cout << a.to_string() << endl ;
+    cout << "b: " << endl;
     cout << b.to_string() << endl;
-    gcd(a,b);
     return 0;
 }

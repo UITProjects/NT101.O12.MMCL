@@ -1,2 +1,8 @@
 ﻿  primenumber.cpp
+C:\Users\ngovu\OneDrive\code\antoanmang\Lab2\bai1\cau4\primenumber.cpp(46,13): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ngovu\OneDrive\code\antoanmang\Lab2\bai1\cau4\primenumber.cpp(58,13): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ngovu\OneDrive\code\antoanmang\Lab2\bai1\cau4\primenumber.cpp(66,13): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ngovu\OneDrive\code\antoanmang\Lab2\bai1\cau4\primenumber.cpp(161,64): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ngovu\OneDrive\code\antoanmang\Lab2\bai1\cau4\primenumber.cpp(168,55): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ngovu\OneDrive\code\antoanmang\Lab2\bai1\cau4\primenumber.cpp(172,13): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
   cau4.vcxproj -> C:\Users\ngovu\OneDrive\code\antoanmang\Lab2\bai1\cau4\x64\Debug\cau4.exe

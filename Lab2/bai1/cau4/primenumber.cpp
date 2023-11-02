@@ -2,7 +2,7 @@
 using namespace std;
 #include<bitset>
 #include<vector>
-
+#include<math.h>
 
 bitset<81> divisor_increment(bitset<81> current_bitset) {
 	for(int i = 80 ;i>=0 ;i--)
@@ -161,10 +161,20 @@ bool divide_bits(bitset<81> a, bitset<81> b) {
 	vector<bool> window = create_window(the_dividend, divisor.size());
 
 	
+	
+	vector<bool> divisor_padding = divisor;
+	int diff = window.size() - divisor.size();
+	diff = abs(diff);
+	if (diff != 0)
+		for (int i = 1; i <= diff;i++)
+			divisor_padding.push_back(false);
 
 
 
-	if (compare_bits(window, divisor) == -1) {
+
+
+
+	if (compare_bits(window, divisor_padding) == -1) {
 		window = create_window(the_dividend, divisor.size() + 1);
 	}
 	int window_size = window.size();
@@ -173,14 +183,20 @@ bool divide_bits(bitset<81> a, bitset<81> b) {
 
 	while (1) {
 		try {
-			if (compare_bits(window, divisor) == -1) {
+			diff = window.size() - divisor.size();
+			diff = abs(diff);
+			if (diff != 0)
+				for (int i = 1; i <= diff;i++)
+					divisor_padding.push_back(false);
+
+			if (compare_bits(window, divisor_padding) == -1) {
 				result.insert(result.begin(), false);
 				window.pop_back();
 				window.insert(window.begin(), the_dividend.at(i - window_size));
 			}
 			else {
 				result.insert(result.begin(), true);
-				vector<bool> minus_result = minus_bits(window, divisor);
+				vector<bool> minus_result = minus_bits(window, divisor_padding);
 				window = minus_result;
 				window.pop_back();
 				window.insert(window.begin(), the_dividend.at(i-window_size));
@@ -206,36 +222,40 @@ bool divide_bits(bitset<81> a, bitset<81> b) {
 
 
 int main() {
-	bitset<81> the_dividend = bitset<81>("1000");
-	bitset<81> divisor = bitset<81>("1");
+	bitset<81> the_dividend = bitset<81>("01010100101");
+	bitset<81> divisor = bitset<81>("101");
 
 	
+	cout<< divide_bits(the_dividend, divisor);
 
 
-	
 	int count = 1;
 
-
+/*
 	do {
 		divisor = divisor_increment(divisor);
 
 		if (divide_bits(the_dividend, divisor))
 		{
 			count += 1;
+			divide_bits(the_dividend, divisor);
 		}
 		cout << "divisor: " << divisor.to_string() << endl;
 	} while (the_dividend != divisor);
 
 
 
+
+	cout << endl << endl;
 	if (count == 2)
 		cout << "La so nguyen to " << endl;
 	else
 		cout << "Khong la so nguyen to " << endl;
 
-	cout << count;
-	
-	
 
+	cout << "So lan chia het: " << count;
+	
+	*/
+	
 
 }

@@ -1,0 +1,3 @@
+﻿  large_number_generate.cpp
+C:\Users\ngovu\OneDrive\code\antoanmang\Lab2\bai1\Project1\large_number_generate.cpp(41): warning C4715: 'min_bits': not all control paths return a value
+  Project1.vcxproj -> C:\Users\ngovu\OneDrive\code\antoanmang\Lab2\bai1\Project1\x64\Debug\Project1.exe

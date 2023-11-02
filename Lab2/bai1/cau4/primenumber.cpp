@@ -151,7 +151,7 @@ bitset<81> divide_bits(bitset<81> a, bitset<81> b) {
 
 
 
-	result = vector<bool>(the_dividend.size());
+	result = vector<bool>();
 
 
 
@@ -167,30 +167,44 @@ bitset<81> divide_bits(bitset<81> a, bitset<81> b) {
 	if (compare_bits(window, divisor) == -1) {
 		window = create_window(the_dividend, divisor.size() + 1);
 	}
+	int window_size = window.size();
+
+	int i = the_dividend.size() - 1;
+
+	while (1) {
+		try {
+			if (compare_bits(window, divisor) == -1) {
+				result.insert(result.begin(), false);
+				window.pop_back();
+				window.insert(window.begin(), the_dividend.at(i - window_size));
+				cout << "window is : ";
+				print_vector(window);
+			}
+			else {
+				result.insert(result.begin(), true);
+				vector<bool> minus_result = minus_bits(window, divisor);
+				window = minus_result;
+				window.pop_back();
+				window.insert(window.begin(), the_dividend.at(i-window_size));
+				cout << "window is : ";
+
+				print_vector(window);
+
+			}
+		}
+		catch (out_of_range e) {
+			cout << endl;
+			cout << "result is :";
+			print_vector(result);
+			cout << "remainder is ";
+			print_vector(window);
+			break;
+		}
+		i--;
+	}
 	
 
-	for (int i = result.size() - 1; i >= 0; i--)
-		if (compare_bits(window, divisor) == -1) {
-			if (i - 1 < 0)
-			{
-				print_vector(result);
-				break;
-			}
-			result[i] = false;
-			window.pop_back();
-			window.insert(window.begin(), the_dividend[i - 1]);
-			print_vector(window);
-		}
-		else {
-			result[i] = true;
-			vector<bool> minus_result = minus_bits(window, divisor);
-			window = minus_result;
-			window.pop_back();
-			window.insert(window.begin(), the_dividend[i - 1]);
-			print_vector(window);
 
-		}
-	print_vector(result);
 
 	return bitset<81>();
 
@@ -200,8 +214,8 @@ bitset<81> divide_bits(bitset<81> a, bitset<81> b) {
 
 
 int main() {
-	bitset<81> the_dividend = bitset<81>("110110");
-	bitset<81> divisor = bitset<81>("100");
+	bitset<81> the_dividend = bitset<81>("001111");
+	bitset<81> divisor = bitset<81>("000100");
 	vector<bool> test(30);
 	cout << the_dividend.to_string() << endl;;
 	cout << divisor.to_string() << endl;

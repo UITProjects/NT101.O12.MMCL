@@ -181,6 +181,8 @@ bool divide_bits(bitset<81> a, bitset<81> b) {
 
 	int i = the_dividend.size() - 1;
 
+	bool first_time = true;
+
 	while (1) {
 		try {
 			diff = window.size() - divisor.size();
@@ -190,8 +192,12 @@ bool divide_bits(bitset<81> a, bitset<81> b) {
 					divisor_padding.push_back(false);
 
 			if (compare_bits(window, divisor_padding) == -1) {
+
 				result.insert(result.begin(), false);
-				window.pop_back();
+
+
+				if (window.at(window.size()-1)==0)
+					window.pop_back();
 				window.insert(window.begin(), the_dividend.at(i - window_size));
 			}
 			else {
@@ -203,6 +209,7 @@ bool divide_bits(bitset<81> a, bitset<81> b) {
 			}
 		}
 		catch (out_of_range e) {
+		//	window.insert(window.begin(), the_dividend[0]);
 			for (bool check: window)
 				if (check) {
 					return false;
@@ -222,16 +229,19 @@ bool divide_bits(bitset<81> a, bitset<81> b) {
 
 
 int main() {
-	bitset<81> the_dividend = bitset<81>("01010100101");
-	bitset<81> divisor = bitset<81>("101");
+	bitset<81> the_dividend = bitset<81>("01010111101");
+	bitset<81> divisor = bitset<81>("1");
 
 	
-	cout<< divide_bits(the_dividend, divisor);
+	//cout<< divide_bits(the_dividend, divisor);
+
+	//return 0 ;
+
 
 
 	int count = 1;
 
-/*
+
 	do {
 		divisor = divisor_increment(divisor);
 
@@ -255,7 +265,7 @@ int main() {
 
 	cout << "So lan chia het: " << count;
 	
-	*/
+	
 	
 
 }

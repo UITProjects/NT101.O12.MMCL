@@ -112,7 +112,7 @@ vector<bool> minus_bits(vector<bool> a, vector<bool> b) {
 
 
 
-bitset<81> divide_bits(bitset<81> a, bitset<81> b) {
+bool divide_bits(bitset<81> a, bitset<81> b) {
 	vector<bool> the_dividend;
 	vector<bool> divisor;
 	vector<bool> result;
@@ -177,8 +177,6 @@ bitset<81> divide_bits(bitset<81> a, bitset<81> b) {
 				result.insert(result.begin(), false);
 				window.pop_back();
 				window.insert(window.begin(), the_dividend.at(i - window_size));
-				cout << "window is : ";
-				print_vector(window);
 			}
 			else {
 				result.insert(result.begin(), true);
@@ -186,19 +184,14 @@ bitset<81> divide_bits(bitset<81> a, bitset<81> b) {
 				window = minus_result;
 				window.pop_back();
 				window.insert(window.begin(), the_dividend.at(i-window_size));
-				cout << "window is : ";
-
-				print_vector(window);
-
 			}
 		}
 		catch (out_of_range e) {
-			cout << endl;
-			cout << "result is :";
-			print_vector(result);
-			cout << "remainder is ";
-			print_vector(window);
-			break;
+			for (bool check: window)
+				if (check) {
+					return false;
+				}
+			return true;
 		}
 		i--;
 	}
@@ -206,7 +199,6 @@ bitset<81> divide_bits(bitset<81> a, bitset<81> b) {
 
 
 
-	return bitset<81>();
 
 
 }
@@ -214,14 +206,36 @@ bitset<81> divide_bits(bitset<81> a, bitset<81> b) {
 
 
 int main() {
-	bitset<81> the_dividend = bitset<81>("001111");
-	bitset<81> divisor = bitset<81>("000100");
-	vector<bool> test(30);
-	cout << the_dividend.to_string() << endl;;
-	cout << divisor.to_string() << endl;
-	divide_bits(the_dividend, divisor);
+	bitset<81> the_dividend = bitset<81>("1000");
+	bitset<81> divisor = bitset<81>("1");
+
 	
 
+
+	
+	int count = 1;
+
+
+	do {
+		divisor = divisor_increment(divisor);
+
+		if (divide_bits(the_dividend, divisor))
+		{
+			count += 1;
+		}
+		cout << "divisor: " << divisor.to_string() << endl;
+	} while (the_dividend != divisor);
+
+
+
+	if (count == 2)
+		cout << "La so nguyen to " << endl;
+	else
+		cout << "Khong la so nguyen to " << endl;
+
+	cout << count;
+	
+	
 
 
 }

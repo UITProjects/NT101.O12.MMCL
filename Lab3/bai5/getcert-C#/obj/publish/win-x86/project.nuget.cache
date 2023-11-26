@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "zdLNtdhHixOlUyKBL5stsD6nJorKHIIV+zpDYAwyqjwjCBYIm2KaOHpD4mlb8HFNj0h8YUMo2xpjQ1gZ9q1zEA==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\ngovu\\OneDrive\\code\\antoanmang\\Lab3\\bai5\\getcert-C#\\getcert-C#.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\ngovu\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x86\\6.0.24\\microsoft.netcore.app.runtime.win-x86.6.0.24.nupkg.sha512",
+    "C:\\Users\\ngovu\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x86\\6.0.24\\microsoft.windowsdesktop.app.runtime.win-x86.6.0.24.nupkg.sha512",
+    "C:\\Users\\ngovu\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x86\\6.0.24\\microsoft.aspnetcore.app.runtime.win-x86.6.0.24.nupkg.sha512"
+  ],
+  "logs": []
+}

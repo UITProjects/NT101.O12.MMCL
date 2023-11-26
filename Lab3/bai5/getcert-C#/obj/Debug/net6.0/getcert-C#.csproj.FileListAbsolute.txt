@@ -1,0 +1,14 @@
+C:\Users\ngovu\OneDrive\code\antoanmang\Lab3\bai5\getcert-C#\bin\Debug\net6.0\getcert-C#.exe
+C:\Users\ngovu\OneDrive\code\antoanmang\Lab3\bai5\getcert-C#\bin\Debug\net6.0\getcert-C#.deps.json
+C:\Users\ngovu\OneDrive\code\antoanmang\Lab3\bai5\getcert-C#\bin\Debug\net6.0\getcert-C#.runtimeconfig.json
+C:\Users\ngovu\OneDrive\code\antoanmang\Lab3\bai5\getcert-C#\bin\Debug\net6.0\getcert-C#.dll
+C:\Users\ngovu\OneDrive\code\antoanmang\Lab3\bai5\getcert-C#\bin\Debug\net6.0\getcert-C#.pdb
+C:\Users\ngovu\OneDrive\code\antoanmang\Lab3\bai5\getcert-C#\obj\Debug\net6.0\getcert-C#.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ngovu\OneDrive\code\antoanmang\Lab3\bai5\getcert-C#\obj\Debug\net6.0\getcert-C#.AssemblyInfoInputs.cache
+C:\Users\ngovu\OneDrive\code\antoanmang\Lab3\bai5\getcert-C#\obj\Debug\net6.0\getcert-C#.AssemblyInfo.cs
+C:\Users\ngovu\OneDrive\code\antoanmang\Lab3\bai5\getcert-C#\obj\Debug\net6.0\getcert-C#.csproj.CoreCompileInputs.cache
+C:\Users\ngovu\OneDrive\code\antoanmang\Lab3\bai5\getcert-C#\obj\Debug\net6.0\getcert-C#.dll
+C:\Users\ngovu\OneDrive\code\antoanmang\Lab3\bai5\getcert-C#\obj\Debug\net6.0\refint\getcert-C#.dll
+C:\Users\ngovu\OneDrive\code\antoanmang\Lab3\bai5\getcert-C#\obj\Debug\net6.0\getcert-C#.pdb
+C:\Users\ngovu\OneDrive\code\antoanmang\Lab3\bai5\getcert-C#\obj\Debug\net6.0\getcert-C#.genruntimeconfig.cache
+C:\Users\ngovu\OneDrive\code\antoanmang\Lab3\bai5\getcert-C#\obj\Debug\net6.0\ref\getcert-C#.dll

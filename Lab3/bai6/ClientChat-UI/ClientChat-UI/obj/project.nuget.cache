@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "ATrsNQf59DeCmXOekzF/V/x9bx2XZ12c3qufBcYSzzsQ88QVKPM3QUekkUzW8JKsxSmu8iT3S3tBDsrVFn1b9Q==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\ngovu\\OneDrive\\code\\antoanmang\\Lab3\\bai6\\ClientChat-UI\\ClientChat-UI\\ClientChat-UI.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\ngovu\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}

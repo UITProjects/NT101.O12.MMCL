@@ -1,0 +1,41 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v6.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v6.0": {
+      "3.1/1.0.0": {
+        "dependencies": {
+          "SHA3": "1.0.0"
+        },
+        "runtime": {
+          "3.1.dll": {}
+        }
+      },
+      "SHA3/1.0.0": {
+        "runtime": {
+          "lib/netstandard2.1/SHA3.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "3.1/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "SHA3/1.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-L2uUWM06yt6w1dS3PnePyq6E3xDZ3+Ck5HWq2zNz8+uwkQaRn75ObpxMh+cRE7qMkB7oOLljlPnOLoWPD+88PQ==",
+      "path": "sha3/1.0.0",
+      "hashPath": "sha3.1.0.0.nupkg.sha512"
+    }
+  }
+}

@@ -1,0 +1,2 @@
+C:\Users\ngovu\OneDrive\code\antoanmang\Lab3\bai5\getcert-C#\bin\Release\net6.0\publish\win-x86\getcert-C#.pdb
+C:\Users\ngovu\OneDrive\code\antoanmang\Lab3\bai5\getcert-C#\bin\Release\net6.0\publish\win-x86\getcert-C#.exe

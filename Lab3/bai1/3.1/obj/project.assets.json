@@ -1,0 +1,101 @@
+{
+  "version": 3,
+  "targets": {
+    "net6.0": {
+      "SHA3/1.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.1/SHA3.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.1/SHA3.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "SHA3/1.0.0": {
+      "sha512": "L2uUWM06yt6w1dS3PnePyq6E3xDZ3+Ck5HWq2zNz8+uwkQaRn75ObpxMh+cRE7qMkB7oOLljlPnOLoWPD+88PQ==",
+      "type": "package",
+      "path": "sha3/1.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/netstandard1.3/SHA3.dll",
+        "lib/netstandard2.1/SHA3.dll",
+        "sha3.1.0.0.nupkg.sha512",
+        "sha3.nuspec"
+      ]
+    }
+  },
+  "projectFileDependencyGroups": {
+    "net6.0": [
+      "SHA3 >= 1.0.0"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\acer\\.nuget\\packages\\": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "C:\\Users\\acer\\Desktop\\Bai1\\3.1\\3.1.csproj",
+      "projectName": "3.1",
+      "projectPath": "C:\\Users\\acer\\Desktop\\Bai1\\3.1\\3.1.csproj",
+      "packagesPath": "C:\\Users\\acer\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\acer\\Desktop\\Bai1\\3.1\\obj\\",
+      "projectStyle": "PackageReference",
+      "configFilePaths": [
+        "C:\\Users\\acer\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "net6.0"
+      ],
+      "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "projectReferences": {}
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      }
+    },
+    "frameworks": {
+      "net6.0": {
+        "targetAlias": "net6.0",
+        "dependencies": {
+          "SHA3": {
+            "target": "Package",
+            "version": "[1.0.0, )"
+          }
+        },
+        "imports": [
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48",
+          "net481"
+        ],
+        "assetTargetFallback": true,
+        "warn": true,
+        "frameworkReferences": {
+          "Microsoft.NETCore.App": {
+            "privateAssets": "all"
+          }
+        },
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.202\\RuntimeIdentifierGraph.json"
+      }
+    }
+  }
+}
